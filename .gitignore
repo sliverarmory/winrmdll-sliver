@@ -399,3 +399,4 @@ FodyWeavers.xsd
 
 .*.un~
 .*.swp~
+.DS_Store
