@@ -1,16 +1,8 @@
 # winrmdll-sliver
 
-C++ WinRM API via Reflective DLL
-
-This project was ported from [mez-0/winrmdll](https://github.com/mez-0/winrmdll) to add Sliver extension support.
+C++ WinRM API via Sliver's reflective DLL loader, ported from [mez-0/winrmdll](https://github.com/mez-0/winrmdll) to add Sliver extension support.
 
 ## Usage
-
-```
-sliver > winrm <hostname> <command> <username> <password>
-```
-
-## Example
 
 ```
 sliver > winrm dc.snaplabs.local whoami snaplabs.local\domain_admin P@ssw0rd1
