@@ -5,7 +5,7 @@ C++ WinRM API via Sliver's reflective DLL loader, ported from [mez-0/winrmdll](h
 ## Usage
 
 ```
-sliver > winrm dc.snaplabs.local whoami snaplabs.local\domain_admin P@ssw0rd1
+sliver > winrm dc.snaplabs.local whoami snaplabs.local\\domain_admin P@ssw0rd1
 ```
 
 ## Resources
