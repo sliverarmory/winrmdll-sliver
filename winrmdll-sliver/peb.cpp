@@ -2,6 +2,8 @@
 
 #include "peb.h"
 
+// source: https://github.com/mez-0/winrmdll
+
 HMODULE WINAPI zzGetModuleHandle(std::wstring sModuleName)
 {
 #ifdef _M_IX86 

@@ -7,6 +7,8 @@
 
 #include "output.h"
 
+// source: https://github.com/DominicBreuker/SliverSamples/tree/main/PasswordPromptExtension/PasswordPromptExtension
+
 Output* NewOutput(int bufferSize, goCallback callback)
 {
 	struct Output output;

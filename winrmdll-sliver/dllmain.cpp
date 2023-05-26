@@ -38,6 +38,7 @@ char* w2a(WCHAR* wstr)
 	return astr;
 }
 
+// Arguments class source: https://github.com/MrAle98/Sliver-PortBender/
 class Arguments {
 public:
 	Arguments(const char* argument_string);

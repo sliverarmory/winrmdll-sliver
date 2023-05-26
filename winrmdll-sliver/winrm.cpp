@@ -4,6 +4,7 @@
 #include "peb.h"
 #include "output.h"
 
+// source: https://github.com/mez-0/winrmdll
 
 WinRM::WinRM()
     : hAPI(NULL),
