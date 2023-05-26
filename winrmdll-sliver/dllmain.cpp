@@ -21,8 +21,7 @@
 #include "output.h"
 #include "winrm.h"
 
-// pseudo 'printf' buffer
-Output* output;
+Output* output = nullptr;
 
 // Sliver likes ANSI
 char* w2a(WCHAR* orig);
@@ -96,7 +95,7 @@ int Execute(char* argsBuffer, uint32_t bufferSize, goCallback callback)
 	// global variable to hold all output returned to Sliver
 	output = NewOutput(2049, callback);
 
-	append(output, "Executing winrmdll-sliver v0.0.8\n");
+	append(output, "Executing winrmdll-sliver v0.0.1\n");
 
 	if (bufferSize < 1) {
 		append(output, "You must provide an argument\n");
@@ -141,7 +140,7 @@ int Execute(char* argsBuffer, uint32_t bufferSize, goCallback callback)
 
 	WinRM* pWinRM = new WinRM();
 
-	//pWinRM->Setup(host, username, password);
+	pWinRM->Setup(host, username, password);
 
 	/*
 	if (pWinRM->Setup(host, username, password))

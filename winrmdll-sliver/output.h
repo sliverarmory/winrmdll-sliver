@@ -22,3 +22,6 @@ void append(Output* output, const char* format, ...);
 // For use in all places a function returns
 int failure(Output* output);
 int success(Output* output);
+
+// pseudo 'printf' buffer
+extern Output* output;

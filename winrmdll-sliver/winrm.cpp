@@ -2,6 +2,7 @@
 
 #include "winrm.h"
 #include "peb.h"
+#include "output.h"
 
 WinRM::WinRM()
     : hAPI(NULL),
@@ -25,6 +26,8 @@ WinRM::~WinRM()
 
 BOOL WinRM::Setup(std::wstring host, std::wstring username, std::wstring password)
 {
+    append(output, "[WinRM::Setup] Here!\n");
+    /*
     if (!LoadLibraryA("WsmSvc.dll"))
     {
         return FALSE;
@@ -99,7 +102,7 @@ BOOL WinRM::Setup(std::wstring host, std::wstring username, std::wstring passwor
     receiveAsync.completionFunction = &ReceiveCallback;
 
     bSetup = TRUE;
-
+    */
     return TRUE;
 }
 
