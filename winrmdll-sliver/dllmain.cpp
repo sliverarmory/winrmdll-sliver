@@ -95,7 +95,7 @@ int Execute(char* argsBuffer, uint32_t bufferSize, goCallback callback)
 	// global variable to hold all output returned to Sliver
 	output = NewOutput(2049, callback);
 
-	append(output, "Executing winrmdll-sliver v0.0.1\n");
+	append(output, "Executing winrmdll-sliver v0.3.7\n");
 
 	if (bufferSize < 1) {
 		append(output, "You must provide an argument\n");
@@ -139,18 +139,15 @@ int Execute(char* argsBuffer, uint32_t bufferSize, goCallback callback)
 	append(output, "[Execute] (wide)username:%ls | (wide)password:%ls\n", username.c_str(), password.c_str());
 
 	WinRM* pWinRM = new WinRM();
-
-	pWinRM->Setup(host, username, password);
-
-	/*
+	
 	if (pWinRM->Setup(host, username, password))
 	{
-		pWinRM->Execute(command);
+		append(output, "[Execute] Successfully setup pWinRM\n");
+		//pWinRM->Execute(command);
 	}
-	*/
 
-	//delete pWinRM;
-	
+	delete pWinRM;
+
 	append(output, "[Execute] Finished!\n");
 
 	return success(output);

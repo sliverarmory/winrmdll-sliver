@@ -4,6 +4,7 @@
 #include "peb.h"
 #include "output.h"
 
+
 WinRM::WinRM()
     : hAPI(NULL),
     hSession(NULL),
@@ -26,8 +27,6 @@ WinRM::~WinRM()
 
 BOOL WinRM::Setup(std::wstring host, std::wstring username, std::wstring password)
 {
-    append(output, "[WinRM::Setup] Here!\n");
-    /*
     if (!LoadLibraryA("WsmSvc.dll"))
     {
         return FALSE;
@@ -40,7 +39,7 @@ BOOL WinRM::Setup(std::wstring host, std::wstring username, std::wstring passwor
     dwError = pWSManInitialize(0, &hAPI);
     if (NO_ERROR != dwError)
     {
-        wprintf(L"WSManInitialize failed: %d\n", dwError);
+        append(output, "WSManInitialize failed: %d\n", dwError);
         return FALSE;
     }
 
@@ -63,7 +62,7 @@ BOOL WinRM::Setup(std::wstring host, std::wstring username, std::wstring passwor
 
     if (dwError != 0)
     {
-        wprintf(L"WSManCreateSession failed: %d\n", dwError);
+        append(output, "WSManCreateSession failed: %d\n", dwError);
         return FALSE;
     }
 
@@ -76,7 +75,7 @@ BOOL WinRM::Setup(std::wstring host, std::wstring username, std::wstring passwor
     dwError = pWSManSetSessionOption(hSession, option, &data);
     if (dwError != 0)
     {
-        wprintf(L"WSManSetSessionOption failed: %d\n", dwError);
+        append(output, "WSManSetSessionOption failed: %d\n", dwError);
         return FALSE;
     }
 
@@ -85,7 +84,7 @@ BOOL WinRM::Setup(std::wstring host, std::wstring username, std::wstring passwor
     if (NULL == hEvent)
     {
         dwError = GetLastError();
-        wprintf(L"CreateEvent failed: %d\n", dwError);
+        append(output, "CreateEvent failed: %d\n", dwError);
         return FALSE;
     }
     async.operationContext = this;
@@ -95,14 +94,14 @@ BOOL WinRM::Setup(std::wstring host, std::wstring username, std::wstring passwor
     if (NULL == hReceiveEvent)
     {
         dwError = GetLastError();
-        wprintf(L"CreateEvent failed: %d\n", dwError);
+        append(output, "CreateEvent failed: %d\n", dwError);
         return FALSE;
     }
     receiveAsync.operationContext = this;
     receiveAsync.completionFunction = &ReceiveCallback;
 
     bSetup = TRUE;
-    */
+
     return TRUE;
 }
 
@@ -115,7 +114,7 @@ BOOL WinRM::Execute(std::wstring commandLine)
     pWaitForSingleObject(hEvent, INFINITE);
     if (dwError != 0)
     {
-        wprintf(L"WSManCreateShell failed: %d\n", dwError);
+        append(output, "WSManCreateShell failed: %d\n", dwError);
         return FALSE;
     }
 
@@ -126,7 +125,7 @@ BOOL WinRM::Execute(std::wstring commandLine)
 
     if (dwError != 0)
     {
-        wprintf(L"WSManRunShellCommand failed: %d\n", dwError);
+        append(output, "WSManRunShellCommand failed: %d\n", dwError);
         return FALSE;
     }
 
@@ -138,7 +137,7 @@ BOOL WinRM::Execute(std::wstring commandLine)
     pWaitForSingleObject(hReceiveEvent, INFINITE);
     if (dwError != 0)
     {
-        wprintf(L"WSManReceiveShellOutput failed: %d\n", dwReceieveError);
+        append(output, "WSManReceiveShellOutput failed: %d\n", dwReceieveError);
         return FALSE;
     }
 
@@ -147,7 +146,7 @@ BOOL WinRM::Execute(std::wstring commandLine)
 
     if (dwError != 0)
     {
-        wprintf(L"WSManCloseOperation failed: %d\n", dwError);
+        append(output, "WSManCloseOperation failed: %d\n", dwError);
         return FALSE;
     }
 
@@ -166,7 +165,7 @@ VOID WinRM::Cleanup()
         pWaitForSingleObject(hEvent, INFINITE);
         if (dwError != 0)
         {
-            wprintf(L"WSManCloseCommand failed: %d\n", dwError);
+            append(output, "WSManCloseCommand failed: %d\n", dwError);
         }
         else
         {
@@ -181,7 +180,7 @@ VOID WinRM::Cleanup()
         pWaitForSingleObject(hEvent, INFINITE);
         if (NO_ERROR != dwError)
         {
-            wprintf(L"WSManCloseShell failed: %d\n", dwError);
+            append(output, "WSManCloseShell failed: %d\n", dwError);
         }
         else
         {
@@ -193,14 +192,14 @@ VOID WinRM::Cleanup()
     dwError = pWSManCloseSession(hSession, 0);
     if (dwError != 0)
     {
-        wprintf(L"WSManCloseSession failed: %d\n", dwError);
+        append(output, "WSManCloseSession failed: %d\n", dwError);
     }
 
     _WSManDeinitialize pWSManDeinitialize = reinterpret_cast<_WSManDeinitialize>(zzGetProcAddress(zzGetModuleHandle(L"WsmSvc.dll"), "WSManDeinitialize"));
     dwError = pWSManDeinitialize(hAPI, 0);
     if (dwError != 0)
     {
-        wprintf(L"WSManDeinitialize failed: %d\n", dwError);
+        append(output, "WSManDeinitialize failed: %d\n", dwError);
     }
 
     _CloseHandle pCloseHandle = reinterpret_cast<_CloseHandle>(zzGetProcAddress(zzGetModuleHandle(L"kernel32.dll"), "CloseHandle"));
@@ -257,7 +256,7 @@ void CALLBACK WinRM::m_WSManShellCompletionFunction
     if (error && 0 != error->code)
     {
         dwError = error->code;
-        wprintf(error->errorDetail);
+        append(output, "[WinRM::m_WSManShellCompletionFunction] Error #1\n");
     }
     reinterpret_cast<_SetEvent>(zzGetProcAddress(zzGetModuleHandle(L"kernel32.dll"), "SetEvent"))(hEvent);
 }
@@ -292,7 +291,7 @@ void CALLBACK WinRM::m_ReceiveCallback
     if (error && 0 != error->code)
     {
         dwReceieveError = error->code;
-        wprintf(error->errorDetail);
+        append(output, "[WinRM::m_ReceiveCallback] Error #2");
     }
 
     if (data && data->streamData.type == WSMAN_DATA_TYPE_BINARY && data->streamData.binaryData.dataLength)
