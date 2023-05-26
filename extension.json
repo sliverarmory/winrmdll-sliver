@@ -1,0 +1,17 @@
+{
+  "name": "winrm",
+  "version": "0.0.1",
+  "command_name": "winrm",
+  "extension_author": "c2biz",
+  "original_author": "mez-0",
+  "repo_url": "https://github.com/sliverarmory/winrmdll-sliver",
+  "help": "C++ WinRM",
+  "entrypoint": "Execute",
+  "files": [
+    {
+      "os": "windows",
+      "arch": "amd64",
+      "path": "winrmdll-sliver.dll"
+    }
+  ]
+}
