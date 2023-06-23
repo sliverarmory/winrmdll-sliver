@@ -1,15 +1,5 @@
-// dllmain.cpp : Defines the entry point for the DLL application.
 #include "pch.h"
 
-/*
-#include <cstdint>
-#include <cstdlib>
-#include <string>
-#include <sstream>
-#include <vector>
-#include <locale>
-#include <codecvt>
-*/
 #include <cstdint>
 #include <string>
 #include <cwchar>
@@ -18,24 +8,41 @@
 #include <vector>
 #include <sstream>
 
-#include "output.h"
+#include "dllmain.h"
 #include "winrm.h"
 
-Output* output = nullptr;
+// global var for returning output to the callback
+std::string msg{ "" };
 
-// Sliver likes ANSI
-char* w2a(WCHAR* orig);
-
-// string manipulation utility function
-char* w2a(WCHAR* wstr)
+// GOLD - *dynamically* allocate the buffer, clear it first,
+//   and format it, before appending to the global 'msg' var
+void appendFormattedMessage(const char* format, ...)
 {
-	const size_t n = (wcslen(wstr) + 1) * 2;
-	char* astr = new char[n];
+	va_list args;
+	va_start(args, format);
 
-	size_t dummy = 0;
-	wcstombs_s(&dummy, astr, n, wstr, _TRUNCATE);
+	// Determine the required size of the formatted string
+	va_list args_copy;
+	va_copy(args_copy, args);
+	int size = vsnprintf(nullptr, 0, format, args_copy);
+	va_end(args_copy);
 
-	return astr;
+	if (size < 0) {
+		// Handle error
+		return;
+	}
+
+	// Allocate the buffer with the required size (+2 for null-terminator and potential overflow)
+	std::unique_ptr<char[]> outBuf(new char[size + 2]);
+
+	// Format the string into the buffer
+	vsnprintf(outBuf.get(), size + 1, format, args); // Use size + 1 here
+
+	va_end(args);
+
+	msg.append(outBuf.get());
+
+	// No need to deallocate the buffer explicitly (std::unique_ptr will handle it)
 }
 
 // Arguments class source: https://github.com/MrAle98/Sliver-PortBender/
@@ -52,8 +59,8 @@ Arguments::Arguments(const char* argument_string) {
 	std::string new_argstr(argument_string);
 	std::string arg;
 	std::stringstream ss(new_argstr);
-	append(output, "[Arguments] argument_string size: %u\n", strlen(argument_string));
-	append(output, "[Arguments] new_argstr size: %u\n", new_argstr.size());
+	//append(output, "[Arguments] argument_string size: %u\n", strlen(argument_string));
+	//append(output, "[Arguments] new_argstr size: %u\n", new_argstr.size());
 	std::vector<std::string> args;
 	while (ss >> arg) {
 		args.push_back(arg);
@@ -66,12 +73,6 @@ Arguments::Arguments(const char* argument_string) {
 	this->Password = args[3];
 
 	return;
-}
-
-std::wstring get_wstring(const std::string& s)
-{
-	std::wstring ws(s.begin(), s.end());
-	return ws;
 }
 
 std::wstring ConvertToWideString(const std::string& narrowString) {
@@ -93,42 +94,33 @@ extern "C" {
 }
 int Execute(char* argsBuffer, uint32_t bufferSize, goCallback callback)
 {
-	// global variable to hold all output returned to Sliver
-	output = NewOutput(2049, callback);
+	// Clear the contents of 'msg'
+	msg = "";
 
-	append(output, "Executing winrmdll-sliver v0.3.7\n");
+	appendFormattedMessage( "winrmdll-sliver v0.0.1\n");
 
 	if (bufferSize < 1) {
-		append(output, "You must provide an argument\n");
-		return failure(output);
+		appendFormattedMessage("You must provide an argument\n");
+		callback(msg.c_str(), msg.length());
+		return 1;
 	}
 
-	append(output, "[Execute] buffer size: %u\n", bufferSize);
-	append(output, "[Execute] argsBuffer: %s\n", argsBuffer);
-	append(output, "[Arguments] argsBuffer size2: %u\n", strlen(argsBuffer));
+	appendFormattedMessage("[Execute] buffer size: %u\n", bufferSize);
+	appendFormattedMessage("[Execute] argsBuffer: %s\n", argsBuffer);
 
-	//try {
 	Arguments args = Arguments(argsBuffer);
 
-	append(output, "[Execute] Arguments processed...\n");
-	append(output, "          hostname: %s\n", args.Hostname.c_str());
-	append(output, "           command: %s\n", args.Command.c_str());
-	append(output, "          username: %s\n", args.Username.c_str());
-	append(output, "          password: %s\n", args.Password.c_str());
-
-	/*
-	catch (const std::exception&) {
-		append(output, "[Execute] Error processing arguments!\n");
-		failure(output);
-	}
-	*/
+	appendFormattedMessage( "[Execute] Arguments processed...\n");
+	appendFormattedMessage("          hostname: %s\n", args.Hostname.c_str());
+	appendFormattedMessage("           command: %s\n", args.Command.c_str());
+	appendFormattedMessage("          username: %s\n", args.Username.c_str());
+	appendFormattedMessage("          password: %s\n", args.Password.c_str());
 
 	// convert for winrm
 	std::wstring host = ConvertToWideString(args.Hostname);
 	std::wstring command = ConvertToWideString(args.Command);
 	std::wstring username = ConvertToWideString(args.Username);
 	std::wstring password = ConvertToWideString(args.Password);
-
 
 	// begin winrm
 	if (username == L"NULL" || password == L"NULL")
@@ -137,21 +129,23 @@ int Execute(char* argsBuffer, uint32_t bufferSize, goCallback callback)
 		password = password.erase();
 	}
 	
-	append(output, "[Execute] (wide)username:%ls | (wide)password:%ls\n", username.c_str(), password.c_str());
+	appendFormattedMessage("[Execute] (wide)username:%ls | (wide)password:%ls\n", username.c_str(), password.c_str());
 
 	WinRM* pWinRM = new WinRM();
 	
 	if (pWinRM->Setup(host, username, password))
 	{
-		append(output, "[Execute] Successfully setup pWinRM\n");
-		//pWinRM->Execute(command);
+		appendFormattedMessage("[Execute] Successfully setup pWinRM\n");
+		pWinRM->Execute(command);
+		delete pWinRM;
+	}
+	else {
+		appendFormattedMessage("[Execute] Failed to setup pWinRM\n");
 	}
 
-	delete pWinRM;
-
-	append(output, "[Execute] Finished!\n");
-
-	return success(output);
+	appendFormattedMessage("[Execute] Finished!\n");
+	callback(msg.c_str(), msg.length());
+	return 0;
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule,

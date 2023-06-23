@@ -21,13 +21,13 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="output.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="winrm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="peb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dllmain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -36,9 +36,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="output.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="winrm.cpp">
