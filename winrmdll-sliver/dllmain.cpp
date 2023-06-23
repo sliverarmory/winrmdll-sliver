@@ -94,7 +94,7 @@ int Execute(char* argsBuffer, uint32_t bufferSize, goCallback callback)
 	// Clear the contents of 'msg'
 	msg = "";
 
-	appendFormattedMessage( "winrmdll-sliver v0.0.1\n");
+	//appendFormattedMessage( "winrmdll-sliver v0.0.2\n");
 
 	if (bufferSize < 1) {
 		appendFormattedMessage("You must provide an argument\n");
@@ -102,16 +102,16 @@ int Execute(char* argsBuffer, uint32_t bufferSize, goCallback callback)
 		return 1;
 	}
 
-	appendFormattedMessage("[Execute] buffer size: %u\n", bufferSize);
-	appendFormattedMessage("[Execute] argsBuffer: %s\n", argsBuffer);
+	//appendFormattedMessage("[Execute] buffer size: %u\n", bufferSize);
+	//appendFormattedMessage("[Execute] argsBuffer: %s\n", argsBuffer);
 
 	Arguments args = Arguments(argsBuffer);
 
-	appendFormattedMessage( "[Execute] Arguments processed...\n");
-	appendFormattedMessage("          hostname: %s\n", args.Hostname.c_str());
-	appendFormattedMessage("           command: %s\n", args.Command.c_str());
-	appendFormattedMessage("          username: %s\n", args.Username.c_str());
-	appendFormattedMessage("          password: %s\n", args.Password.c_str());
+	appendFormattedMessage( "[+] Arguments processed\n");
+	appendFormattedMessage("       hostname: %s\n", args.Hostname.c_str());
+	appendFormattedMessage("        command: %s\n", args.Command.c_str());
+	appendFormattedMessage("       username: %s\n", args.Username.c_str());
+	appendFormattedMessage("       password: %s\n", args.Password.c_str());
 
 	// convert for winrm
 	std::wstring host = ConvertToWideString(args.Hostname);
@@ -126,13 +126,13 @@ int Execute(char* argsBuffer, uint32_t bufferSize, goCallback callback)
 		password = password.erase();
 	}
 	
-	appendFormattedMessage("[Execute] (wide)username:%ls | (wide)password:%ls\n", username.c_str(), password.c_str());
+	//appendFormattedMessage("[Execute] (wide)username:%ls | (wide)password:%ls\n", username.c_str(), password.c_str());
 
 	WinRM* pWinRM = new WinRM();
 	
 	if (pWinRM->Setup(host, username, password))
 	{
-		appendFormattedMessage("[Execute] Successfully setup pWinRM\n");
+		//appendFormattedMessage("[Execute] Successfully setup pWinRM\n");
 		pWinRM->Execute(command);
 		delete pWinRM;
 	}
@@ -140,7 +140,7 @@ int Execute(char* argsBuffer, uint32_t bufferSize, goCallback callback)
 		appendFormattedMessage("[Execute] Failed to setup pWinRM\n");
 	}
 
-	appendFormattedMessage("[Execute] Finished!\n");
+	//appendFormattedMessage("[Execute] Finished!\n");
 	callback(msg.c_str(), msg.length());
 	return 0;
 }

@@ -5,7 +5,17 @@ C++ WinRM API via Sliver's reflective DLL loader, ported from [mez-0/winrmdll](h
 ## Usage
 
 ```
-sliver > winrm dc.snaplabs.local whoami snaplabs.local\\domain_admin P@ssw0rd1
+sliver > winrm dc.snaplabs.local whoami snaplabs.local\\domain_admin P@ssword1
+
+[*] Successfully executed winrm
+[*] Got output:
+[+] Arguments processed
+       hostname: dc.snaplabs.local
+        command: whoami
+       username: snaplabs.local\domain_admin
+       password: P@ssword1
+
+snaplabs\domain_admin
 ```
 
 ## Resources
