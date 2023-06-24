@@ -37,6 +37,7 @@ jobs:
     - name: Build Package
       # Powershell is utter fucking trash.
       run: |
+        cd ..
         mkdir compiled
         $Version = git.exe describe --tags --abbrev=0
         $Version = "`"$Version`""
