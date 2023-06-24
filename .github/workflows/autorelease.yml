@@ -31,7 +31,7 @@ jobs:
 
     - name: MSBuild
       run: |
-        cd cd .\winrmdll-sliver\
+        cd .\winrmdll-sliver\
         msbuild.exe .\winrmdll-sliver.vcxproj /p:Configuration=Release /p:Platform="Any CPU"
 
     - name: Build Package
