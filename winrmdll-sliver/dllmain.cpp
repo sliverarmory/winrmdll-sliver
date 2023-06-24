@@ -56,18 +56,40 @@ public:
 };
 
 Arguments::Arguments(const char* argument_string) {
-	std::string new_argstr(argument_string);
+	std::istringstream iss(argument_string);
 	std::string arg;
-	std::stringstream ss(new_argstr);
-	std::vector<std::string> args;
-	while (ss >> arg) {
-		args.push_back(arg);
-	}
+	std::string value;
 
-	this->Hostname = args[0];
-	this->Command = args[1];
-	this->Username = args[2];
-	this->Password = args[3];
+	while (iss >> arg) {
+		if (arg == "-i") {
+			if (!(iss >> Hostname)) {
+				// handle error: missing hostname value
+				Hostname = ""; // Set to empty string
+			}
+		}
+		else if (arg == "-c") {
+			// lazy- reading to the end
+			std::getline(iss, value);
+			if (value != "") {
+				Command = value.substr(1);  // Remove leading space
+			}
+			else {
+				Command = "";
+			}
+		}
+		else if (arg == "-u") {
+			if (!(iss >> Username)) {
+				// handle error: missing username value
+				Username = ""; // Set to empty string
+			}
+		}
+		else if (arg == "-p") {
+			if (!(iss >> Password)) {
+				// handle error: missing password value
+				Password = ""; // Set to empty string
+			}
+		}
+	}
 
 	return;
 }
@@ -111,7 +133,7 @@ int Execute(char* argsBuffer, uint32_t bufferSize, goCallback callback)
 	appendFormattedMessage("       hostname: %s\n", args.Hostname.c_str());
 	appendFormattedMessage("        command: %s\n", args.Command.c_str());
 	appendFormattedMessage("       username: %s\n", args.Username.c_str());
-	appendFormattedMessage("       password: %s\n", args.Password.c_str());
+	appendFormattedMessage("       password: %s\n\n", args.Password.c_str());
 
 	// convert for winrm
 	std::wstring host = ConvertToWideString(args.Hostname);
@@ -120,7 +142,7 @@ int Execute(char* argsBuffer, uint32_t bufferSize, goCallback callback)
 	std::wstring password = ConvertToWideString(args.Password);
 
 	// begin winrm
-	if (username == L"NULL" || password == L"NULL")
+	if (username == L"" || password == L"")
 	{
 		username = username.erase();
 		password = password.erase();

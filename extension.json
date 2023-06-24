@@ -1,11 +1,12 @@
 {
   "name": "winrm",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "command_name": "winrm",
   "extension_author": "c2biz",
   "original_author": "mez-0",
   "repo_url": "https://github.com/sliverarmory/winrmdll-sliver",
-  "help": "C++ WinRM",
+  "help": "Execute commands remotely via WinRM",
+  "long_help": "Execute commands remotely via WinRM\n\nUsage:\n  -i,  hostname/ip of target system\n  -u,  username to authenticate as\n  -p,  password used to authenticate\n  -c,  command to execute remotely (must be last arguement passed)\n\nExample:\n  winrm -- -i dc.snaplabs.local -u snaplabs.local\\\\domain_admin -p P@ssword1 -c dir c:\\\\users",
   "entrypoint": "Execute",
   "files": [
     {

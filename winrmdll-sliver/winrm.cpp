@@ -305,7 +305,7 @@ void CALLBACK WinRM::m_ReceiveCallback
         pWriteFile(hFile, data->streamData.binaryData.data, data->streamData.binaryData.dataLength, &t_BufferWriteLength, NULL);
 
         // Print the received data using printf
-        appendFormattedMessage("\n%.*s", static_cast<int>(data->streamData.binaryData.dataLength), data->streamData.binaryData.data);
+        appendFormattedMessage("%.*s", static_cast<int>(data->streamData.binaryData.dataLength), data->streamData.binaryData.data);
     }
 
     if ((error && 0 != error->code) || (data && data->commandState && wcscmp(data->commandState, WSMAN_COMMAND_STATE_DONE) == 0))
