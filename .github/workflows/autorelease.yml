@@ -50,7 +50,8 @@ jobs:
         cd compiled
         tar.exe -czvf ..\winrm.tar.gz .
         cd ..
-        pwd ls
+        pwd
+        ls
 
     - name: Sign Package
       run: |
