@@ -34,7 +34,7 @@ jobs:
     - name: MSBuild
       run: |
         cd .\winrmdll-sliver\
-        msbuild.exe .\winrmdll-sliver.vcxproj /p:Configuration=Release /p:Platform="Any CPU"
+        msbuild.exe .\winrmdll-sliver.vcxproj /p:Configuration=Release /p:Platform="x64"
         cd ..
 
     - name: Build Package
@@ -46,7 +46,7 @@ jobs:
         $Version = git.exe describe --tags --abbrev=0
         $Version = "`"$Version`""
         Get-Content -Path extension.json | .\jq.exe ".version |= `"$Version`"" > ./compiled/extension.json
-        Copy-Item -Path .\winrmdll-sliver\Release\winrmdll-sliver.dll -Destination compiled\winrmdll-sliver.dll
+        Copy-Item -Path .\winrmdll-sliver\Release\x64\winrmdll-sliver.dll -Destination compiled\winrmdll-sliver.dll
         cd compiled
         tar.exe -czvf ..\winrm.tar.gz .
         cd ..
